@@ -19,13 +19,13 @@ def getTag(text):
     for i in range(len(text)):
         if(text[i] == tags_marker[0]):
             if(tag_open == True):
-                print("[Error]: Tag already opened")
+                print("[ERROR]: Tag already opened")
             else:
                 tag_open = True
                 tag = ""
         elif(text[i] == tags_marker[1]):
             if(tag_open == False):
-                print("[Error]: Closing Tag without opening one")
+                print("[ERROR]: Closing Tag without opening one")
             else:
                 tag_open = False
                 res.append(tag)
@@ -43,7 +43,13 @@ def arbo(list):
         res += ("<" +elt +">")
         if(elt[0] == '/'):
             res += '\n'
+    return res
 
+def strList(list):
+    res = ""
+    index = 0
+    for elt in list:
+        res += ("<" +elt +">\n")
     return res
 
 def getStack(list):
@@ -53,23 +59,33 @@ def getStack(list):
         if(elt[0] == '/'):
             if(elt[1:] == res.peek()):
                 res.pop()
-                print(elt, "tag found and popped. Stack is now", res)
+                print("[STACK]", elt, "tag found and matched. Stack is now", res)
             else:
-                print("[Error]: Mismatch. Tag is",elt[1:],"but top of stack is",res.peek())
+                print("[ERROR]: Mismatch. Tag is",elt[1:],"but top of stack is",res.peek())
         else:
             if(not(elt in validtags)):
+                print("[TAGS]  Tag",elt,"not recognized. Adding to list.")
                 validtags.append(elt)
 
             #Check for exceptions
             if(elt[:4] == "meta"):
-                print("META tag found. No need to match. Stack is still", res)
+                print("[STACK] META tag found. No need to match. Stack is still", res)
+                if(not(elt in exceptions)):
+                    print("[TAGS]  Tag",elt,"not recognized. Adding to list.")
+                    exceptions.append(elt[:4])
             elif(elt[:2] == "br"):
-                print("BR tag found. No need to match. Stack is still", res)
+                print("[STACK] BR tag found. No need to match. Stack is still", res)
+                if(not(elt in exceptions)):
+                    print("[TAGS]  Tag",elt,"not recognized. Adding to list.")
+                    exceptions.append(elt[:2])
             elif(elt[:2] == "hr"):
-                print("HR tag found. No need to match. Stack is still", res)
+                print("[STACK] HR tag found. No need to match. Stack is still", res)
+                if(not(elt in exceptions)):
+                    print("[TAGS]  Tag",elt,"not recognized. Adding to list.")
+                    exceptions.append(elt[:2])
             else:
                 res.push(elt)
-                print(elt, "tag found and pushed. Stack is now", res)
+                print("[STACK]", elt, "tag found and pushed. Stack is now", res)
 
     return res
 
@@ -79,16 +95,26 @@ def main():
 
     text = html_file.read()
     tag_list = getTag(text)
+    print("________________LIST________________")
     print(arbo(tag_list))
 
     global validtags
     validtags = []
+    global exceptions
+    exceptions = []
+    print("________________STACK________________")
     tag_stack = getStack(tag_list)
 
     #Summary
     if(tag_stack == []):
-        print("Processing complete. No mismatches found.")
+        print("[RESULT] Processing complete. No mismatches found.")
     else:
-        print("Processing complete. Unmatched tags remain on stack:", tag_stack)
+        print("[RESULT] Processing complete. Unmatched tags remain on stack:", tag_stack)
+
+    print("\n________________VALIDTAGS________________")
+    print(strList(validtags))
+
+    print("________________EXCEPTIONS________________")
+    print(strList(exceptions))
 
 main()
