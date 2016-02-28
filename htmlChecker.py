@@ -36,6 +36,16 @@ def getTag(text):
 
     return res
 
+def arbo(list):
+    res = ""
+    index = 0
+    for elt in list:
+        res += ("<" +elt +">")
+        if(elt[0] == '/'):
+            res += '\n'
+
+    return res
+
 def getStack(list):
     res = stack.Stack()
 
@@ -43,6 +53,7 @@ def getStack(list):
         if(elt[0] == '/'):
             if(elt[1:] == res.peek()):
                 res.pop()
+                print(elt, "tag found and popped. Stack is now", res)
             else:
                 print("[Error]: Mismatch. Tag is",elt[1:],"but top of stack is",res.peek())
         else:
@@ -58,6 +69,7 @@ def getStack(list):
                 print("HR tag found. No need to match. Stack is still", res)
             else:
                 res.push(elt)
+                print(elt, "tag found and pushed. Stack is now", res)
 
     return res
 
@@ -67,7 +79,8 @@ def main():
 
     text = html_file.read()
     tag_list = getTag(text)
-    #[DEBUG]print(tag_list)
+    print(arbo(tag_list))
+
     global validtags
     validtags = []
     tag_stack = getStack(tag_list)
