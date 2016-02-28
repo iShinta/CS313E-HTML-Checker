@@ -10,37 +10,39 @@
 
 import stack
 
+#Returns the tags inside a list
+def getTag(text):
+    res = []
+    tags_marker = "<>"
+    tag_open = False
+
+    for i in range(len(text)):
+        if(text[i] == tags_marker[0]):
+            if(tag_open == True):
+                print("[Error]: Tag already opened")
+            else:
+                tag_open = True
+                tag = ""
+        elif(text[i] == tags_marker[1]):
+            if(tag_open == False):
+                print("[Error]: Closing Tag without opening one")
+            else:
+                tag_open = False
+                res.append(tag)
+                #[DEBUG]print("Added tag:",tag)
+        else:
+            if(tag_open == True):
+                tag += (text[i])
+
+    return res
+
 def main():
     file_name = "htmlfile.txt"
     html_file = open('./' +file_name, 'r')
 
-    #Where the tags are stored in order
-    tags = stack.Stack()
-    tags_marker = "<>"
+    text = html_file.read()
+    tag_list = getTag(text)
 
-    #Initialization of checker variables
-    tag_open = False
-
-    for line in html_file:
-
-        #Extracts the tags
-        for i in range(len(line)):
-            if(line[i] == tags_marker[0]):
-                if(tag_open == True):
-                    print("[Error]: Tag already opened")
-                else:
-                    tag_open = True
-                    tag = ""
-            elif(line[i] == tags_marker[1]):
-                if(tag_open == False):
-                    print("[Error]: Closing Tag without opening one")
-                else:
-                    tag_open = False
-                    tags.push(tag)
-                    print("Added tag:",tag)
-            else:
-                if(tag_open == True):
-                    tag += (line[i])
-
+    print(tag_list)
 
 main()
