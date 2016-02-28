@@ -36,13 +36,46 @@ def getTag(text):
 
     return res
 
+def getStack(list):
+    res = stack.Stack()
+
+    for elt in list:
+        if(elt[0] == '/'):
+            if(elt[1:] == res.peek()):
+                res.pop()
+            else:
+                print("[Error]: Mismatch. Tag is",elt[1:],"but top of stack is",res.peek())
+        else:
+            if(not(elt in validtags)):
+                validtags.append(elt)
+
+            #Check for exceptions
+            if(elt[:4] == "meta"):
+                print("META tag found")
+            elif(elt[:2] == "br"):
+                print("BR tag found")
+            elif(elt[:2] == "hr"):
+                print("HR tag found")
+            else:
+                res.push(elt)
+
+    return res
+
 def main():
     file_name = "htmlfile.txt"
     html_file = open('./' +file_name, 'r')
 
     text = html_file.read()
     tag_list = getTag(text)
+    #[DEBUG]print(tag_list)
+    global validtags
+    validtags = []
+    tag_stack = getStack(tag_list)
 
-    print(tag_list)
+    #Summary
+    if(tag_stack == []):
+        print("Processing complete. No mismatches found.")
+    else:
+        print("Processing complete. Unmatched tags remain on stack:", tag_stack)
 
 main()
