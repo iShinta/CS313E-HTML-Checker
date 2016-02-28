@@ -51,11 +51,11 @@ def getStack(list):
 
             #Check for exceptions
             if(elt[:4] == "meta"):
-                print("META tag found")
+                print("META tag found. No need to match. Stack is still", res)
             elif(elt[:2] == "br"):
-                print("BR tag found")
+                print("BR tag found. No need to match. Stack is still", res)
             elif(elt[:2] == "hr"):
-                print("HR tag found")
+                print("HR tag found. No need to match. Stack is still", res)
             else:
                 res.push(elt)
 
